@@ -1,0 +1,27 @@
+services:
+  db:
+    container_name: indico-pg
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: indico
+    ports:
+      - "5432:5432"
+    volumes:
+      - indico:/var/lib/postgresql/data
+
+  app:
+    container_name: indico-app
+    build: .
+    ports:
+      - "7575:7575"
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+volumes:
+  indico:
+
+
