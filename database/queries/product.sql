@@ -19,3 +19,9 @@ UPDATE i_products SET quantity = $2, updated_at=now() WHERE product_id = $1;
 
 -- name: DeleteProduct :exec
 DELETE FROM i_products WHERE product_id = $1;
+
+-- name: SelectSumQuantityProductsByLocation :one
+SELECT SUM(a.quantity) as total
+FROM i_products a
+LEFT JOIN i_warehouses b ON b.warehouse_id = a.location_id
+WHERE a.location_id = $1;

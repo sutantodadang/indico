@@ -25,6 +25,7 @@ type Querier interface {
 	SelectOrders(ctx context.Context) ([]SelectOrdersRow, error)
 	SelectProducts(ctx context.Context) ([]SelectProductsRow, error)
 	SelectRoles(ctx context.Context) ([]SelectRolesRow, error)
+	SelectSumQuantityProductsByLocation(ctx context.Context, locationID pgtype.UUID) (int64, error)
 	SelectUserByRole(ctx context.Context, uniqueName UserRole) ([]SelectUserByRoleRow, error)
 	SelectWarehouses(ctx context.Context) ([]SelectWarehousesRow, error)
 	UpdateProduct(ctx context.Context, arg UpdateProductParams) error

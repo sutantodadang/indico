@@ -17,6 +17,11 @@ type MockRepo struct {
 	mock.Mock
 }
 
+// SelectSumQuantityProductsByLocation implements repositories.Querier.
+func (m *MockRepo) SelectSumQuantityProductsByLocation(ctx context.Context, locationID pgtype.UUID) (int64, error) {
+	panic("unimplemented")
+}
+
 // SelectRoles implements repositories.Querier.
 func (m *MockRepo) SelectRoles(ctx context.Context) ([]repositories.SelectRolesRow, error) {
 	panic("unimplemented")

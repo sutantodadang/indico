@@ -118,6 +118,20 @@ func (q *Queries) SelectProducts(ctx context.Context) ([]SelectProductsRow, erro
 	return items, nil
 }
 
+const selectSumQuantityProductsByLocation = `-- name: SelectSumQuantityProductsByLocation :one
+SELECT SUM(a.quantity) as total
+FROM i_products a
+LEFT JOIN i_warehouses b ON b.warehouse_id = a.location_id
+WHERE a.location_id = $1
+`
+
+func (q *Queries) SelectSumQuantityProductsByLocation(ctx context.Context, locationID pgtype.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, selectSumQuantityProductsByLocation, locationID)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
 const updateProduct = `-- name: UpdateProduct :exec
 UPDATE i_products SET sku = $2, name = $3, quantity = $4, location_id = $5, updated_at=now() WHERE product_id = $1
 `

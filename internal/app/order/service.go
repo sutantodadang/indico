@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"indico/internal/repositories"
 	"sync"
@@ -103,6 +104,18 @@ func (o *OrderService) ShipOrder(ctx context.Context, req CreateOrderRequest) (e
 			return
 		}
 
+		total, err := o.repo.SelectSumQuantityProductsByLocation(ctx, dataProduct.WarehouseID)
+		if err != nil {
+			log.Error().Err(err).Send()
+			errChan <- err
+			return
+		}
+
+		if int64(dataProduct.Capacity.Int32) < (total - int64(req.Quantity)) {
+			errChan <- errors.New("exceeded capacity")
+			return
+		}
+
 		err = o.repo.InsertOrder(ctx, repositories.InsertOrderParams{
 			OrderID:     pgtype.UUID{Bytes: id, Valid: true},
 			UserID:      pgtype.UUID{Bytes: uuid.MustParse(req.UserId), Valid: true},
@@ -174,6 +187,18 @@ func (o *OrderService) ReceiveOrder(ctx context.Context, req CreateOrderRequest)
 		if err != nil {
 			log.Error().Err(err).Send()
 			errChan <- err
+			return
+		}
+
+		total, err := o.repo.SelectSumQuantityProductsByLocation(ctx, dataProduct.WarehouseID)
+		if err != nil {
+			log.Error().Err(err).Send()
+			errChan <- err
+			return
+		}
+
+		if int64(dataProduct.Capacity.Int32) < (total + int64(req.Quantity)) {
+			errChan <- errors.New("exceeded capacity")
 			return
 		}
 
