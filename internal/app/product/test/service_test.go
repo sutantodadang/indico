@@ -5,6 +5,7 @@ import (
 	"errors"
 	"indico/internal/app/product"
 	"indico/internal/repositories"
+	"indico/internal/repositories/mocks"
 	"testing"
 
 	"github.com/google/uuid"
@@ -13,107 +14,8 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockRepo struct {
-	mock.Mock
-}
-
-// SelectSumQuantityProductsByLocation implements repositories.Querier.
-func (m *MockRepo) SelectSumQuantityProductsByLocation(ctx context.Context, locationID pgtype.UUID) (int64, error) {
-	panic("unimplemented")
-}
-
-// SelectRoles implements repositories.Querier.
-func (m *MockRepo) SelectRoles(ctx context.Context) ([]repositories.SelectRolesRow, error) {
-	panic("unimplemented")
-}
-
-// InsertOrder implements repositories.Querier.
-func (m *MockRepo) InsertOrder(ctx context.Context, arg repositories.InsertOrderParams) error {
-	panic("unimplemented")
-}
-
-// InsertRole implements repositories.Querier.
-func (m *MockRepo) InsertRole(ctx context.Context, arg repositories.InsertRoleParams) error {
-	panic("unimplemented")
-}
-
-// InsertUser implements repositories.Querier.
-func (m *MockRepo) InsertUser(ctx context.Context, arg repositories.InsertUserParams) error {
-	panic("unimplemented")
-}
-
-// InsertWarehouse implements repositories.Querier.
-func (m *MockRepo) InsertWarehouse(ctx context.Context, arg repositories.InsertWarehouseParams) error {
-	panic("unimplemented")
-}
-
-// SelectOneOrder implements repositories.Querier.
-func (m *MockRepo) SelectOneOrder(ctx context.Context, orderID pgtype.UUID) (repositories.SelectOneOrderRow, error) {
-	panic("unimplemented")
-}
-
-// SelectOneUserByEmail implements repositories.Querier.
-func (m *MockRepo) SelectOneUserByEmail(ctx context.Context, email string) (repositories.SelectOneUserByEmailRow, error) {
-	panic("unimplemented")
-}
-
-// SelectOneUserById implements repositories.Querier.
-func (m *MockRepo) SelectOneUserById(ctx context.Context, userID pgtype.UUID) (repositories.SelectOneUserByIdRow, error) {
-	panic("unimplemented")
-}
-
-// SelectOneUserByRoleId implements repositories.Querier.
-func (m *MockRepo) SelectOneUserByRoleId(ctx context.Context, userRoleID pgtype.UUID) (repositories.SelectOneUserByRoleIdRow, error) {
-	panic("unimplemented")
-}
-
-// SelectOrders implements repositories.Querier.
-func (m *MockRepo) SelectOrders(ctx context.Context) ([]repositories.SelectOrdersRow, error) {
-	panic("unimplemented")
-}
-
-// SelectUserByRole implements repositories.Querier.
-func (m *MockRepo) SelectUserByRole(ctx context.Context, uniqueName repositories.UserRole) ([]repositories.SelectUserByRoleRow, error) {
-	panic("unimplemented")
-}
-
-// SelectWarehouses implements repositories.Querier.
-func (m *MockRepo) SelectWarehouses(ctx context.Context) ([]repositories.SelectWarehousesRow, error) {
-	panic("unimplemented")
-}
-
-// UpdateProductQuantity implements repositories.Querier.
-func (m *MockRepo) UpdateProductQuantity(ctx context.Context, arg repositories.UpdateProductQuantityParams) error {
-	panic("unimplemented")
-}
-
-func (m *MockRepo) InsertProduct(ctx context.Context, params repositories.InsertProductParams) error {
-	args := m.Called(ctx, params)
-	return args.Error(0)
-}
-
-func (m *MockRepo) SelectProducts(ctx context.Context) ([]repositories.SelectProductsRow, error) {
-	args := m.Called(ctx)
-	return args.Get(0).([]repositories.SelectProductsRow), args.Error(1)
-}
-
-func (m *MockRepo) SelectOneProduct(ctx context.Context, id pgtype.UUID) (repositories.SelectOneProductRow, error) {
-	args := m.Called(ctx, id)
-	return args.Get(0).(repositories.SelectOneProductRow), args.Error(1)
-}
-
-func (m *MockRepo) UpdateProduct(ctx context.Context, params repositories.UpdateProductParams) error {
-	args := m.Called(ctx, params)
-	return args.Error(0)
-}
-
-func (m *MockRepo) DeleteProduct(ctx context.Context, id pgtype.UUID) error {
-	args := m.Called(ctx, id)
-	return args.Error(0)
-}
-
 func TestAddProduct(t *testing.T) {
-	mockRepo := new(MockRepo)
+	mockRepo := new(mocks.MockRepo)
 	service := product.NewProductService(mockRepo)
 
 	req := product.CreateProductRequest{
@@ -129,7 +31,7 @@ func TestAddProduct(t *testing.T) {
 }
 
 func TestGetProduct(t *testing.T) {
-	mockRepo := new(MockRepo)
+	mockRepo := new(mocks.MockRepo)
 	service := product.NewProductService(mockRepo)
 
 	id := uuid.New()
@@ -156,7 +58,7 @@ func TestGetProduct(t *testing.T) {
 }
 
 func TestUpdateProduct_Error(t *testing.T) {
-	mockRepo := new(MockRepo)
+	mockRepo := new(mocks.MockRepo)
 	service := product.NewProductService(mockRepo)
 
 	id := uuid.New()
@@ -177,7 +79,7 @@ func TestUpdateProduct_Error(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	mockRepo := new(MockRepo)
+	mockRepo := new(mocks.MockRepo)
 	service := product.NewProductService(mockRepo)
 
 	id := uuid.New()
